@@ -3,5 +3,13 @@
   "description": "The quickest and easiest way to start a Java web app that uses the Force.com REST APIs",
   "repository": "https://github.com/jayeshtejwani/SFDCJavaRest/restjava",
   "website": "http://www.jamesward.com",
-  "keywords": ["salesforce", "java"]
+  "keywords": ["salesforce", "java"],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-java"
+    },
+    {
+      "url": "heroku/java"
+    }
+  ]
 }
