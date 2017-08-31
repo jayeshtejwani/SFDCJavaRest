@@ -6,10 +6,10 @@
   "keywords": ["salesforce", "java"],
   "buildpacks": [
     {
-      "url": "https://github.com/heroku/heroku-buildpack-java"
+      "url": "https://github.com/heroku/heroku-buildpack-scala"
     },
     {
-      "url": "heroku/java"
+      "url": "heroku/scala"
     }
   ]
 }
