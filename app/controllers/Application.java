@@ -104,8 +104,10 @@ public class Application extends Controller {
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Account {
             public String Id;
-            public String Name;
-           
+            public String ContactName;
+            public String Name;            
+            public String AccountOwner;
+            public String Phone;           
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -131,7 +133,7 @@ public class Application extends Controller {
         public F.Promise<List<Account>> getAccounts(AuthInfo authInfo) {
             F.Promise<WSResponse> responsePromise = ws.url(authInfo.instanceUrl + "/services/data/v34.0/query/")
                     .setHeader("Authorization", "Bearer " + authInfo.accessToken)
-                    .setQueryParameter("q", "SELECT Id, Name FROM Account")
+                    .setQueryParameter("q", "select  id,name, account.name, account.owner.name,account.phone from contact where account.name !=null and account.phone!= null and accountId!= null order by createddate desc")
                     .get();
 
             return responsePromise.flatMap(response -> {

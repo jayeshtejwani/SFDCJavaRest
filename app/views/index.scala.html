@@ -6,13 +6,17 @@
 
     <table class="table">
         <tr>
-            <th>Id</th>
-            <th>Name</th>            
+            <th>Account Name</th>
+            <th>Contact Name</th>			
+			<th>Account Owner</th>
+			<th>Phone</th>            
         </tr>
         @accounts.map { account =>
             <tr>
-                <td>@account.Id</td>
-                <td>@account.Name</td>                
+				<td>@account.Name</td>
+                <td>@account.ContactName</td>				
+				<td>@account.AccountOwner</td>
+				<td>@account.Phone</td>                
             </tr>
         }
     </table>
