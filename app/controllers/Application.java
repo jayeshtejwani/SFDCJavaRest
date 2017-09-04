@@ -14,7 +14,7 @@ import views.html.*;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import java.util.List;
+import java.util.*;
 
 public class Application extends Controller {
 
@@ -43,8 +43,8 @@ public class Application extends Controller {
                 return F.Promise.pure(redirect(url));
             } else {
                 return force.getToken(code, oauthCallbackUrl(request())).flatMap(authInfo ->
-                        force.getAccounts(authInfo).<Result>map(accounts ->
-                                ok(index.render(accounts))
+                        force.getContacts(authInfo).<Result>map(contacts ->
+                                ok(index.render(contacts))
                         )
                 ).recover(error -> {
                     if (error instanceof Force.AuthException)
@@ -102,16 +102,36 @@ public class Application extends Controller {
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class Account {
+        public static class Contact {
             public String Id;
-            public String Name;            
+            public String Name;
+            public String AccountId;
+            public AccountClass Account;                     
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class AccountClass {
+            //public String Id;
+            public Map<String,String> attributes;
+            public String Name;
             public String Phone;
-            public String BillingCountry;           
+            public String BillingCity;
+            public String BillingCountry;
+            public String BillingPostalCode;
+            public String BillingState;
+            public String BillingStreet;            
+            public OwnerClass Owner;                       
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class OwnerClass {
+            public Map<String,String> attributes;
+            public String Name;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         private static class QueryResultAccount {
-            public List<Account> records;
+            public List<Contact> records;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -129,14 +149,22 @@ public class Application extends Controller {
             }
         }
 
-        public F.Promise<List<Account>> getAccounts(AuthInfo authInfo) {
+        public F.Promise<List<Contact>> getContacts(AuthInfo authInfo) {
             F.Promise<WSResponse> responsePromise = ws.url(authInfo.instanceUrl + "/services/data/v34.0/query/")
                     .setHeader("Authorization", "Bearer " + authInfo.accessToken)
-                    .setQueryParameter("q", "select id, name, phone,billingcountry from account where phone!= null and billingcountry != null order by createddate desc")
+                    .setQueryParameter("q", "SELECT Id,Name,accountid,account.name,account.phone,account.owner.name,account.BillingCity,account.BillingCountry,account.BillingPostalCode,account.BillingState,account.BillingStreet FROM Contact where accountid!=null and account.phone!=null order by lastmodifieddate desc")
                     .get();
 
             return responsePromise.flatMap(response -> {
                 JsonNode jsonNode = response.asJson();
+                System.out.println(jsonNode);
+                /*for(JsonNode root : jsonNode){
+                Account acc = new Account();
+                acc.Name = root.path("Name").asText();
+                System.out.println("Id : " + acc.Name);
+                } */
+                F.Promise<List<Contact>> tesAcc = F.Promise.pure(Json.fromJson(jsonNode, QueryResultAccount.class).records);
+                System.out.println(tesAcc);   
                 if (jsonNode.has("error"))
                     return F.Promise.throwing(new Exception(jsonNode.get("error").textValue()));
                 else

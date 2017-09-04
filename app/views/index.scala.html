@@ -1,4 +1,4 @@
-@(accounts: List[Application.Force.Account])
+@(contacts: List[Application.Force.Contact])
 
 @main {
 
@@ -7,14 +7,18 @@
     <table class="table">
         <tr>
             <th>Account Name</th>
-            <th>Phone </th>			
-			<th>Country</th>			            
+            <th>Owner Name</th>
+            <th>Phone</th>
+            <th>Contact Name</th>                                                      
+            <th>Address</th>      
         </tr>
-        @accounts.map { account =>
+        @contacts.map { contact =>
             <tr>
-				<td>@account.Name</td>                								
-				<td>@account.Phone</td>       
-				<td>@account.BillingCountry</td>				
+                <td>@contact.Account.Name</td>                                                           
+                <td>@contact.Account.Owner.Name</td>
+                <td>@contact.Account.Phone</td>
+                <td>@contact.Name</td>
+                <td>@contact.Account.BillingStreet, @contact.Account.BillingCity, @contact.Account.BillingState, @contact.Account.BillingPostalCode,  @contact.Account.BillingCountry</td>                        
             </tr>
         }
     </table>
