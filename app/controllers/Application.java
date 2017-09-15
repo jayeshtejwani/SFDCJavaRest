@@ -37,14 +37,14 @@ public class Application extends Controller {
         if (isSetup()) {
             if (code == null) {
                 // start oauth
-                final String url = "https://test.salesforce.com/services/oauth2/authorize?response_type=code" +
+                final String url = "https://login.salesforce.com/services/oauth2/authorize?response_type=code" +
                         "&client_id=" + force.consumerKey +
                         "&redirect_uri=" + oauthCallbackUrl(request());
                 return F.Promise.pure(redirect(url));
             } else {
                 return force.getToken(code, oauthCallbackUrl(request())).flatMap(authInfo ->
-                        force.getContacts(authInfo).<Result>map(contacts ->
-                                ok(index.render(contacts))
+                        force.getAccounts(authInfo).<Result>map(accounts ->
+                                ok(index.render(accounts))
                         )
                 ).recover(error -> {
                     if (error instanceof Force.AuthException)
@@ -84,7 +84,7 @@ public class Application extends Controller {
         }
 
         public F.Promise<AuthInfo> getToken(String code, String redirectUrl) {
-            F.Promise<WSResponse> responsePromise = ws.url("https://test.salesforce.com/services/oauth2/token")
+            F.Promise<WSResponse> responsePromise = ws.url("https://login.salesforce.com/services/oauth2/token")
                     .setQueryParameter("grant_type", "authorization_code")
                     .setQueryParameter("code", code)
                     .setQueryParameter("client_id", consumerKey)
@@ -101,26 +101,21 @@ public class Application extends Controller {
             });
         }
 
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class Contact {
-            public String Id;
-            public String Name;
-            public String AccountId;
-            public AccountClass Account;                     
-        }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class AccountClass {
-            //public String Id;
-            public Map<String,String> attributes;
-            public String Name;
-            public String Phone;
-            public String BillingCity;
-            public String BillingCountry;
-            public String BillingPostalCode;
-            public String BillingState;
-            public String BillingStreet;            
-            public OwnerClass Owner;                       
+        public static class Account {
+            public String Id="";
+            public String CaseNumber="";
+            public String Origin="";
+			public String Priority="";			
+			public String Reason="";
+            public String Status="";	
+			public String Subject="";
+            public String Branch_Address__c="";
+            public String Branch_Code__c="";
+            public String Type;
+            public String SubType__c;
+            public OwnerClass Owner= new OwnerClass();            			
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -131,7 +126,7 @@ public class Application extends Controller {
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         private static class QueryResultAccount {
-            public List<Contact> records;
+            public List<Account> records;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -149,22 +144,14 @@ public class Application extends Controller {
             }
         }
 
-        public F.Promise<List<Contact>> getContacts(AuthInfo authInfo) {
+        public F.Promise<List<Account>> getAccounts(AuthInfo authInfo) {
             F.Promise<WSResponse> responsePromise = ws.url(authInfo.instanceUrl + "/services/data/v34.0/query/")
                     .setHeader("Authorization", "Bearer " + authInfo.accessToken)
-                    .setQueryParameter("q", "SELECT Id,Name,accountid,account.name,account.phone,account.owner.name,account.BillingCity,account.BillingCountry,account.BillingPostalCode,account.BillingState,account.BillingStreet FROM Contact where accountid!=null and account.phone!=null order by lastmodifieddate desc")
+                    .setQueryParameter("q", "select id, Type,SubType__c,Branch_Address__c, Branch_Code__c, Owner.name, casenumber,Origin,Priority,Reason,Status,Subject from case order by createddate desc")
                     .get();
 
             return responsePromise.flatMap(response -> {
                 JsonNode jsonNode = response.asJson();
-                System.out.println(jsonNode);
-                /*for(JsonNode root : jsonNode){
-                Account acc = new Account();
-                acc.Name = root.path("Name").asText();
-                System.out.println("Id : " + acc.Name);
-                } */
-                F.Promise<List<Contact>> tesAcc = F.Promise.pure(Json.fromJson(jsonNode, QueryResultAccount.class).records);
-                System.out.println(tesAcc);   
                 if (jsonNode.has("error"))
                     return F.Promise.throwing(new Exception(jsonNode.get("error").textValue()));
                 else

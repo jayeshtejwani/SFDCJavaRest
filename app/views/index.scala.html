@@ -1,26 +1,44 @@
-@(contacts: List[Application.Force.Contact])
+@(accounts: List[Application.Force.Account])
 
 @main {
 
-    <h2>Salesforce Accounts</h2>
+    <h2>Salesforce Complaints</h2>
 
-    <table class="table">
+    <div class="text-center">
+            <button class="btn btn-primary btn-info btn-sx" type="button">Update</button>
+            <button class="btn btn-primary btn-info btn-sx" type="button">Submit</button>
+    </div>
+    <br/>
+    
+    <div class="table-responsive">
+    <table class="table table-bordered">
         <tr>
-            <th>Account Name</th>
-            <th>Owner Name</th>
-            <th>Phone</th>
-            <th>Contact Name</th>                                                      
-            <th>Address</th>      
+            <th>Case Number</th>
+            <th>Origin </th>
+            <th>Status</th>	
+            <th>Priority</th>
+            <th>Category</th>
+            <th>Sub Category</th>
+            <th>Branch Address & Code</th>
+            <th>Subject</th>		
+            <th>Case Close Reason</th>
+            <th>Case Owner</th>		            
         </tr>
-        @contacts.map { contact =>
+        @accounts.map { account =>
             <tr>
-                <td>@contact.Account.Name</td>                                                           
-                <td>@contact.Account.Owner.Name</td>
-                <td>@contact.Account.Phone</td>
-                <td>@contact.Name</td>
-                <td>@contact.Account.BillingStreet, @contact.Account.BillingCity, @contact.Account.BillingState, @contact.Account.BillingPostalCode,  @contact.Account.BillingCountry</td>                        
+				<td>@account.CaseNumber</td>                								
+                <td>@account.Origin</td>  
+                <td>@account.Status</td>      
+                <td>@account.Priority</td>
+                <td>@account.Type</td>
+                <td>@account.SubType__c</td>
+                <td>@account.Branch_Address__c @account.Branch_Code__c</td>
+                <td>@account.Subject</td>
+                <td>@account.Reason</td>
+                <td>@account.Owner.Name</td>                												
             </tr>
         }
     </table>
+</div>
 
 }

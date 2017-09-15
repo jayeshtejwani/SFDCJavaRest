@@ -7,7 +7,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>ThinkOn</title>
+        <title>EnAct</title>
         <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <style>
@@ -17,18 +17,37 @@
         </style>
     </head>
     <body>
+        
+    <style type="text/css">  
+        .navbar.navbar-inverse {
+            color: #fff;
+            background-color: grey;
+        }
+        .btn-info {
+            color: #fff;
+            background-color: grey;
+        }   
+
+        .navbar-inverse .navbar-brand {
+            color: black;
+            
+        }
+        
+        
+    </style>
 
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
-                <div class="navbar-header">                    
-                    <a class="navbar-brand" href="#"><img style="max-width:100px; margin-top: -7px;" src="@routes.Assets.versioned("images/thinkon.png")"></a>                    
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#"><img style="max-width:80px; margin-top: -7px;" src="@routes.Assets.versioned("images/fiserv.png")"></a>
+                    <a class="navbar-brand " href="#">EnAct</a>
                 </div>
             </div>
         </nav>
 
         <div class="container">
-            @content
+            @content           
         </div>
-
+        
     </body>
 </html>
