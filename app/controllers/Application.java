@@ -37,7 +37,7 @@ public class Application extends Controller {
         if (isSetup()) {
             if (code == null) {
                 // start oauth
-                final String url = "https://login.salesforce.com/services/oauth2/authorize?response_type=code" +
+                final String url = "https://test.salesforce.com/services/oauth2/authorize?response_type=code" +
                         "&client_id=" + force.consumerKey +
                         "&redirect_uri=" + oauthCallbackUrl(request());
                 return F.Promise.pure(redirect(url));
