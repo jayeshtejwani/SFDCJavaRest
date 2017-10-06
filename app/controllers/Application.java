@@ -84,7 +84,7 @@ public class Application extends Controller {
         }
 
         public F.Promise<AuthInfo> getToken(String code, String redirectUrl) {
-            F.Promise<WSResponse> responsePromise = ws.url("https://login.salesforce.com/services/oauth2/token")
+            F.Promise<WSResponse> responsePromise = ws.url("https://test.salesforce.com/services/oauth2/token")
                     .setQueryParameter("grant_type", "authorization_code")
                     .setQueryParameter("code", code)
                     .setQueryParameter("client_id", consumerKey)
